@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Orders Admin - Sports Store</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { 
+      background: #f8f9fa; 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+    
+    .hero-section {
+      background: linear-gradient(135deg, #e9ecef 0%, #d6d8db 100%);
+      color: #333;
+      padding: 2rem 0;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #ced4da;
+    }
+    
+    .card {
+      border: 1px solid #dee2e6;
+      border-radius: 0.5rem;
+      box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+      transition: transform 0.2s ease-in-out;
+    }
+    
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    }
+    
+    .table thead th {
+      background: #e9ecef;
+      color: #333;
+      border: none;
+      padding: 1rem;
+      font-weight: 600;
+    }
+    
+    .table tbody td {
+      padding: 1rem;
+      vertical-align: middle;
+    }
+    
+    .status-badge {
+      font-size: 0.85rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+    }
+    
+    .btn-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+      border-radius: 0.2rem;
+    }
+    
+    .modal-content {
+      border: none;
+      border-radius: 0.5rem;
+    }
+    
+    .modal-header {
+      background: #e9ecef;
+      color: #333;
+      border-radius: 0.5rem 0.5rem 0 0;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: #0d6efd;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    
+    .search-container {
+      position: relative;
+    }
+    
+    .search-results {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #dee2e6;
+      border-top: none;
+      border-radius: 0 0 0.375rem 0.375rem;
+      z-index: 1000;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
+    
+    .search-results .list-group-item {
+      border: none;
+      border-bottom: 1px solid #dee2e6;
+      cursor: pointer;
+      padding: 0.75rem 1rem;
+    }
+    
+    .search-results .list-group-item:hover {
+      background-color: #f8f9fa;
+    }
+    
+    .search-results .list-group-item:last-child {
+      border-bottom: none;
+    }
+    
+    .no-results {
+      padding: 0.75rem 1rem;
+      color: #6c757d;
+    }
+    
+    .search-type-selector {
+      max-width: 150px;
+    }
+    
+    .search-hint {
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-top: 0.5rem;
+    }
+    
+    .status-summary {
+      margin-bottom: 2rem;
+    }
+    
+    .status-card {
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .status-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .status-count {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    
+    .status-label {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .status-new {
+      background-color: #e3f2fd;
+      border-left: 4px solid #2196f3;
+    }
+    
+    .status-processing {
+      background-color: #fff3e0;
+      border-left: 4px solid #ff9800;
+    }
+    
+    .status-shipped {
+      background-color: #e8f5e9;
+      border-left: 4px solid #4caf50;
+    }
+    
+    .status-delivered {
+      background-color: #f1f8e9;
+      border-left: 4px solid #8bc34a;
+    }
+    
+    .status-cancelled {
+      background-color: #ffebee;
+      border-left: 4px solid #f44336;
+    }
+    
+    .active-filter {
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      transform: translateY(-5px);
+    }
+    
+    .summary-title {
+      border-bottom: 2px solid #dee2e6;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <a class="navbar-brand" href="index.html">
+      <i class="fa-solid fa-trophy me-2"></i>Sports Store
+    </a>
+  </div>
+</nav>
+
+<div class="hero-section text-center">
+  <div class="container">
+    <h1>Orders Administration</h1>
+    <p>Manage all customer orders and track their status</p>
+  </div>
+</div>
+
+<div class="container mt-4">
+  <div id="alertArea"></div>
+  
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="fa-solid fa-list-check me-2"></i>All Orders</h3>
+    <button class="btn btn-primary" onclick="loadOrders()">
+      <i class="fa-solid fa-rotate me-1"></i> Refresh
+    </button>
+  </div>
+  
+  <!-- Status Summary Section -->
+  <div class="status-summary">
+    <h4 class="summary-title"><i class="fa-solid fa-chart-pie me-2"></i>Orders Summary</h4>
+    <div class="row g-3" id="statusSummary">
+      <div class="col-md-2 col-6">
+        <div class="card status-card status-new p-3 active-filter" onclick="filterByStatus('ALL')">
+          <div class="status-count text-primary" id="totalOrders">0</div>
+          <div class="status-label text-muted">TOTAL ORDERS</div>
+        </div>
+      </div>
+      <div class="col-md-2 col-6">
+        <div class="card status-card status-new p-3" onclick="filterByStatus('NEW')">
+          <div class="status-count text-primary" id="newOrders">0</div>
+          <div class="status-label text-muted">NEW</div>
+        </div>
+      </div>
+      <div class="col-md-2 col-6">
+        <div class="card status-card status-processing p-3" onclick="filterByStatus('PROCESSING')">
+          <div class="status-count text-warning" id="processingOrders">0</div>
+          <div class="status-label text-muted">PROCESSING</div>
+        </div>
+      </div>
+      <div class="col-md-2 col-6">
+        <div class="card status-card status-shipped p-3" onclick="filterByStatus('SHIPPED')">
+          <div class="status-count text-info" id="shippedOrders">0</div>
+          <div class="status-label text-muted">SHIPPED</div>
+        </div>
+      </div>
+      <div class="col-md-2 col-6">
+        <div class="card status-card status-delivered p-3" onclick="filterByStatus('DELIVERED')">
+          <div class="status-count text-success" id="deliveredOrders">0</div>
+          <div class="status-label text-muted">DELIVERED</div>
+        </div>
+      </div>
+      <div class="col-md-2 col-6">
+        <div class="card status-card status-cancelled p-3" onclick="filterByStatus('CANCELLED')">
+          <div class="status-count text-danger" id="cancelledOrders">0</div>
+          <div class="status-label text-muted">CANCELLED</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Enhanced Search Bar -->
+  <div class="mb-4 p-3 bg-light rounded">
+    <h5 class="mb-3"><i class="fa-solid fa-magnifying-glass me-2"></i>Search Orders</h5>
+    <div class="search-container">
+      <div class="input-group">
+        <select class="form-select search-type-selector" id="searchType">
+          <option value="all">All Fields</option>
+          <option value="product">Product Name</option>
+          <option value="orderId">Order ID</option>
+          <option value="phone">Phone Number</option>
+          <option value="customer">Customer Name</option>
+        </select>
+        <input type="text" id="searchInput" class="form-control" placeholder="Type to search..." autocomplete="off">
+        <button class="btn btn-primary" type="button" onclick="performSearch()">
+          <i class="fa-solid fa-search me-1"></i> Search
+        </button>
+        <button class="btn btn-outline-secondary" type="button" onclick="clearSearch()">
+          <i class="fa-solid fa-times me-1"></i> Clear
+        </button>
+      </div>
+      <div id="searchResults" class="search-results"></div>
+    </div>
+    <div class="form-text">Search by product name, order ID, phone number, or customer name</div>
+    <div class="search-hint" id="phoneSearchHint" style="display: none;">
+      <i class="fa-solid fa-lightbulb me-1"></i>Tip: For phone numbers, you can search with or without spaces/dashes
+    </div>
+  </div>
+  
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Time</th>
+          <th>Customer</th>
+          <th>Phone</th>
+          <th>Product</th>
+          <th>Qty</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="ordersTable">
+        <tr>
+          <td colspan="9" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading orders...</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Update Modal -->
+<div class="modal fade" id="updateModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form id="updateForm">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fa-solid fa-pen-to-square me-2"></i>Update Order</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body row g-3">
+          <input type="hidden" id="updOrderId" name="orderId">
+          
+          <div class="col-md-6">
+            <label class="form-label"><i class="fa-solid fa-user me-1"></i> Customer Name</label>
+            <input type="text" class="form-control" id="updCustomerName" name="customerName" required>
+          </div>
+          
+          <div class="col-md-6">
+            <label class="form-label"><i class="fa-solid fa-phone me-1"></i> Phone</label>
+            <input type="text" class="form-control" id="updPhone" name="phone" required>
+          </div>
+          
+          <div class="col-md-8">
+            <label class="form-label"><i class="fa-solid fa-cube me-1"></i> Product</label>
+            <input type="text" class="form-control" id="updProductTitle" name="productTitle" required>
+          </div>
+          
+          <div class="col-md-2">
+            <label class="form-label"><i class="fa-solid fa-hashtag me-1"></i> Quantity</label>
+            <input type="number" class="form-control" id="updQuantity" name="quantity" min="1" required>
+          </div>
+          
+          <div class="col-md-2">
+            <label class="form-label"><i class="fa-solid fa-indian-rupee-sign me-1"></i> Total Amount</label>
+            <input type="number" class="form-control" id="updTotalAmount" name="totalAmount" required>
+          </div>
+          
+          <div class="col-12">
+            <label class="form-label"><i class="fa-solid fa-location-dot me-1"></i> Address</label>
+            <input type="text" class="form-control" id="updAddress" name="address" required>
+          </div>
+          
+          <div class="col-md-3">
+            <label class="form-label"><i class="fa-solid fa-map-pin me-1"></i> Pin Code</label>
+            <input type="text" class="form-control" id="updPin" name="pin" required>
+          </div>
+          
+          <div class="col-md-5">
+            <label class="form-label"><i class="fa-solid fa-city me-1"></i> Place / City</label>
+            <input type="text" class="form-control" id="updPlace" name="place" required>
+          </div>
+          
+          <div class="col-md-4">
+            <label class="form-label"><i class="fa-solid fa-circle-check me-1"></i> Status</label>
+            <select class="form-select" id="updStatus" name="status">
+              <option value="NEW">NEW</option>
+              <option value="PROCESSING">PROCESSING</option>
+              <option value="SHIPPED">SHIPPED</option>
+              <option value="DELIVERED">DELIVERED</option>
+              <option value="CANCELLED">CANCELLED</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fa-solid fa-xmark me-1"></i> Close
+          </button>
+          <button type="submit" class="btn btn-success">
+            <i class="fa-solid fa-floppy-disk me-1"></i> Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbx7Z-vqCzhfKiXz4faj9voVygx9H0pBk8O6JMmZkY5guIcVKAG0ufpMd6qxvMC6EKfsEw/exec";
+let updateModal;
+let allOrders = [];
+let currentSearchTerm = '';
+let currentSearchType = 'all';
+let currentStatusFilter = 'ALL';
+
+function showAlert(msg, type='danger') {
+  document.getElementById('alertArea').innerHTML = `
+    <div class="alert alert-${type} alert-dismissible fade show">
+      <i class="fa-solid fa-${type === 'success' ? 'circle-check' : 'circle-exclamation'} me-2"></i>
+      ${msg}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>`;
+  setTimeout(() => { document.getElementById('alertArea').innerHTML = '' }, 6000);
+}
+
+async function loadOrders() {
+  try {
+    const res = await fetch(`${API_URL}?action=getAllOrders`);
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`HTTP ${res.status}: ${text}`);
+    }
+    const data = await res.json();
+    allOrders = data;
+    
+    updateStatusSummary(data);
+    
+    // If there's an active search, apply it to the newly loaded data
+    if (currentSearchTerm) {
+      filterOrders(currentSearchType, currentSearchTerm);
+    } else if (currentStatusFilter !== 'ALL') {
+      filterByStatus(currentStatusFilter);
+    } else {
+      displayOrders(data);
+    }
+  } catch (err) {
+    console.error(err);
+    showAlert("Failed to load orders. Please check your connection and try again.", "danger");
+  }
+}
+
+function updateStatusSummary(orders) {
+  const statusCounts = {
+    'NEW': 0,
+    'PROCESSING': 0,
+    'SHIPPED': 0,
+    'DELIVERED': 0,
+    'CANCELLED': 0
+  };
+  
+  orders.forEach(order => {
+    const status = order.Status || 'NEW';
+    if (statusCounts.hasOwnProperty(status)) {
+      statusCounts[status]++;
+    }
+  });
+  
+  // Update the summary cards
+  document.getElementById('totalOrders').textContent = orders.length;
+  document.getElementById('newOrders').textContent = statusCounts['NEW'];
+  document.getElementById('processingOrders').textContent = statusCounts['PROCESSING'];
+  document.getElementById('shippedOrders').textContent = statusCounts['SHIPPED'];
+  document.getElementById('deliveredOrders').textContent = statusCounts['DELIVERED'];
+  document.getElementById('cancelledOrders').textContent = statusCounts['CANCELLED'];
+}
+
+function displayOrders(orders) {
+  const tbody = document.getElementById("ordersTable");
+  
+  if (!orders || orders.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="9" class="text-center py-5">
+          <i class="fa-solid fa-inbox fa-3x text-muted mb-3"></i>
+          <h5 class="text-muted">No Orders Found</h5>
+          <p class="text-muted">There are no orders matching your criteria.</p>
+        </td>
+      </tr>`;
+    return;
+  }
+  
+  tbody.innerHTML = orders.map(o => {
+    // Determine status badge color
+    let statusClass = 'bg-secondary';
+    if (o.Status === 'DELIVERED') statusClass = 'bg-success';
+    else if (o.Status === 'SHIPPED') statusClass = 'bg-primary';
+    else if (o.Status === 'PROCESSING') statusClass = 'bg-warning';
+    else if (o.Status === 'CANCELLED') statusClass = 'bg-danger';
+    
+    // Format the timestamp
+    let formattedTime = o.Timestamp;
+    try {
+      if (o.Timestamp) {
+        const date = new Date(o.Timestamp);
+        formattedTime = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      }
+    } catch (e) {
+      // Keep original timestamp if formatting fails
+    }
+    
+    return `
+      <tr>
+        <td><strong>${o.OrderID || 'N/A'}</strong></td>
+        <td>${formattedTime}</td>
+        <td>${o.CustomerName || ''}</td>
+        <td>${o.Phone || ''}</td>
+        <td>${o.ProductTitle || ''}</td>
+        <td>${o.Quantity || ''}</td>
+        <td>₹${o.TotalAmount || 0}</td>
+        <td><span class="badge ${statusClass} status-badge">${o.Status || 'NEW'}</span></td>
+        <td>
+          <button class="btn btn-sm btn-success me-1" onclick='openUpdateModal(${JSON.stringify(o).replace(/'/g, "&#39;")})'>
+            <i class="fa-solid fa-pen"></i>
+          </button>
+          <button class="btn btn-sm btn-danger" onclick="deleteOrder('${o.OrderID}')">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function filterByStatus(status) {
+  currentStatusFilter = status;
+  
+  // Update active filter UI
+  document.querySelectorAll('.status-card').forEach(card => {
+    card.classList.remove('active-filter');
+  });
+  
+  if (status === 'ALL') {
+    document.querySelectorAll('.status-card')[0].classList.add('active-filter');
+    displayOrders(allOrders);
+  } else {
+    document.querySelectorAll('.status-card')[[
+      'ALL', 'NEW', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'
+    ].indexOf(status)].classList.add('active-filter');
+    
+    const filteredOrders = allOrders.filter(o => o.Status === status);
+    displayOrders(filteredOrders);
+  }
+}
+
+// Enhanced search functionality
+function performSearch() {
+  const searchType = document.getElementById('searchType').value;
+  const searchText = document.getElementById('searchInput').value.trim();
+  currentSearchType = searchType;
+  currentSearchTerm = searchText;
+  
+  if (searchText.length < 2) {
+    showAlert("Please enter at least 2 characters to search", "warning");
+    filterByStatus(currentStatusFilter);
+    return;
+  }
+  
+  filterOrders(searchType, searchText);
+}
+
+function normalizePhone(phone) {
+  if (!phone) return '';
+  // Remove all non-digit characters for comparison
+  return phone.toString().replace(/\D/g, '');
+}
+
+function filterOrders(searchType, searchText) {
+  const searchTextLower = searchText.toLowerCase();
+  const searchTextNormalized = normalizePhone(searchText);
+  
+  let filteredOrders = allOrders;
+  
+  // First apply status filter if needed
+  if (currentStatusFilter !== 'ALL') {
+    filteredOrders = filteredOrders.filter(o => o.Status === currentStatusFilter);
+  }
+  
+  // Then apply search filter
+  filteredOrders = filteredOrders.filter(o => {
+    if (searchType === 'all') {
+      // Search across all relevant fields
+      return (
+        (o.ProductTitle && o.ProductTitle.toLowerCase().includes(searchTextLower)) ||
+        (o.OrderID && o.OrderID.toString().toLowerCase().includes(searchTextLower)) ||
+        (o.Phone && normalizePhone(o.Phone).includes(searchTextNormalized)) ||
+        (o.CustomerName && o.CustomerName.toLowerCase().includes(searchTextLower))
+      );
+    } else if (searchType === 'product') {
+      return o.ProductTitle && o.ProductTitle.toLowerCase().includes(searchTextLower);
+    } else if (searchType === 'orderId') {
+      return o.OrderID && o.OrderID.toString().toLowerCase().includes(searchTextLower);
+    } else if (searchType === 'phone') {
+      return o.Phone && normalizePhone(o.Phone).includes(searchTextNormalized);
+    } else if (searchType === 'customer') {
+      return o.CustomerName && o.CustomerName.toLowerCase().includes(searchTextLower);
+    }
+    return false;
+  });
+  
+  if (filteredOrders.length === 0) {
+    document.getElementById('ordersTable').innerHTML = `
+      <tr>
+        <td colspan="9" class="text-center py-5">
+          <i class="fa-solid fa-search fa-3x text-muted mb-3"></i>
+          <h5 class="text-muted">No Orders Found</h5>
+          <p class="text-muted">No orders found for your search "${searchText}"</p>
+          <button class="btn btn-primary mt-2" onclick="clearSearch()">
+            <i class="fa-solid fa-eye me-1"></i> View All Orders
+          </button>
+        </td>
+      </tr>`;
+  } else {
+    displayOrders(filteredOrders);
+  }
+}
+
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  currentSearchTerm = '';
+  filterByStatus(currentStatusFilter);
+}
+
+// Auto-suggest functionality for search
+function setupSearchSuggestions() {
+  const searchInput = document.getElementById('searchInput');
+  const resultsContainer = document.getElementById('searchResults');
+  const searchType = document.getElementById('searchType');
+  const phoneHint = document.getElementById('phoneSearchHint');
+  
+  // Show phone search hint when phone search is selected
+  searchType.addEventListener('change', function() {
+    if (this.value === 'phone') {
+      phoneHint.style.display = 'block';
+    } else {
+      phoneHint.style.display = 'none';
+    }
+    
+    if (searchInput.value.length >= 2) {
+      searchInput.dispatchEvent(new Event('input'));
+    } else {
+      resultsContainer.style.display = 'none';
+    }
+  });
+  
+  searchInput.addEventListener('input', function() {
+    const searchText = this.value.trim();
+    const currentType = searchType.value;
+    
+    if (searchText.length < 2) {
+      resultsContainer.style.display = 'none';
+      return;
+    }
+    
+    // Get unique values that match the search
+    let suggestions = [];
+    const searchTextLower = searchText.toLowerCase();
+    const searchTextNormalized = normalizePhone(searchText);
+    
+    if (currentType === 'all' || currentType === 'product') {
+      const productSuggestions = [...new Set(allOrders
+        .map(order => order.ProductTitle)
+        .filter(title => title && title.toLowerCase().includes(searchTextLower))
+      )].slice(0, 3);
+      suggestions = [...suggestions, ...productSuggestions];
+    }
+    
+    if (currentType === 'all' || currentType === 'orderId') {
+      const orderIdSuggestions = [...new Set(allOrders
+        .map(order => order.OrderID)
+        .filter(id => id && id.toString().toLowerCase().includes(searchTextLower))
+      )].slice(0, 3);
+      suggestions = [...suggestions, ...orderIdSuggestions];
+    }
+    
+    if (currentType === 'all' || currentType === 'phone') {
+      const phoneSuggestions = [...new Set(allOrders
+        .map(order => order.Phone)
+        .filter(phone => phone && normalizePhone(phone).includes(searchTextNormalized))
+      )].slice(0, 3);
+      suggestions = [...suggestions, ...phoneSuggestions];
+    }
+    
+    if (currentType === 'all' || currentType === 'customer') {
+      const customerSuggestions = [...new Set(allOrders
+        .map(order => order.CustomerName)
+        .filter(name => name && name.toLowerCase().includes(searchTextLower))
+      )].slice(0, 3);
+      suggestions = [...suggestions, ...customerSuggestions];
+    }
+    
+    // Remove duplicates and limit to 5 suggestions
+    suggestions = [...new Set(suggestions)].slice(0, 5);
+    
+    if (suggestions.length > 0) {
+      resultsContainer.innerHTML = suggestions.map(item => 
+        `<div class="list-group-item" onclick="selectSearchSuggestion('${item.toString().replace(/'/g, "\\'")}')">${item}</div>`
+      ).join('');
+      resultsContainer.style.display = 'block';
+    } else {
+      resultsContainer.innerHTML = '<div class="no-results">No matching results found</div>';
+      resultsContainer.style.display = 'block';
+    }
+  });
+  
+  // Hide suggestions when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+      resultsContainer.style.display = 'none';
+    }
+  });
+}
+
+function selectSearchSuggestion(value) {
+  document.getElementById('searchInput').value = value;
+  document.getElementById('searchResults').style.display = 'none';
+  performSearch();
+}
+
+function openUpdateModal(order) {
+  document.getElementById("updOrderId").value = order.OrderID;
+  document.getElementById("updCustomerName").value = order.CustomerName;
+  document.getElementById("updPhone").value = order.Phone;
+  document.getElementById("updProductTitle").value = order.ProductTitle;
+  document.getElementById("updQuantity").value = order.Quantity;
+  document.getElementById("updTotalAmount").value = order.TotalAmount;
+  document.getElementById("updAddress").value = order.Address;
+  document.getElementById("updPin").value = order.PinCode;
+  document.getElementById("updPlace").value = order.Place;
+  document.getElementById("updStatus").value = order.Status || 'NEW';
+
+  updateModal = new bootstrap.Modal(document.getElementById("updateModal"));
+  updateModal.show();
+}
+
+document.getElementById("updateForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  
+  // Show loading state
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  const originalText = submitBtn.innerHTML;
+  submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Saving...';
+  submitBtn.disabled = true;
+  
+  const formData = new FormData(e.target);
+  const body = new URLSearchParams(formData);
+  body.append("action","update");
+
+  try {
+    const res = await fetch(API_URL, { method:"POST", body });
+    const result = await res.json();
+    showAlert(result.message || "Order updated successfully", result.status==="success" ? "success" : "warning");
+    updateModal.hide();
+    loadOrders();
+  } catch (err) {
+    console.error(err);
+    showAlert("Failed to update order. Please try again.", "danger");
+  } finally {
+    submitBtn.innerHTML = originalText;
+    submitBtn.disabled = false;
+  }
+});
+
+async function deleteOrder(orderId) {
+  if (!confirm("Are you sure you want to delete this order? This action cannot be undone.")) return;
+  
+  try {
+    const body = new URLSearchParams();
+    body.append("action","delete");
+    body.append("orderId", orderId);
+    const res = await fetch(API_URL, { method:"POST", body });
+    const result = await res.json();
+    showAlert(result.message || "Order deleted successfully", result.status==="success" ? "success" : "warning");
+    loadOrders();
+  } catch (err) {
+    console.error(err);
+    showAlert("Failed to delete order. Please try again.", "danger");
+  }
+}
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', function() {
+  loadOrders();
+  setTimeout(setupSearchSuggestions, 1000); // Wait for orders to load
+});
+</script>
+</body>
+</html>
