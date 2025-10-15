@@ -7,26 +7,72 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    :root {
+      --primary-color: #1a4b8c;
+      --secondary-color: #f8f9fa;
+      --accent-color: #ff6b35;
+      --text-color: #333;
+      --light-text: #6c757d;
+      --border-color: #dee2e6;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s ease;
+    }
+    
     body { 
-      background: #f8f9fa; 
+      background: #fff; 
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    .navbar {
+      background: var(--primary-color) !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 0.8rem 0;
     }
     
     .navbar-brand {
       font-weight: 700;
       font-size: 1.5rem;
+      color: white !important;
+    }
+    
+    .navbar-brand i {
+      color: var(--accent-color);
     }
     
     .hero-section {
-      background: #e9ecef;
-      color: #333;
-      padding: 2rem 0;
-      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--primary-color) 0%, #2c6bb8 100%);
+      color: white;
+      padding: 3rem 0;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    
+    .hero-section h1 {
+      font-weight: 700;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .hero-section p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
     }
     
     .card {
-      border: 1px solid #dee2e6;
-      border-radius: 0.25rem;
+      border: none;
+      border-radius: 0.5rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      margin-bottom: 1.5rem;
+    }
+    
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
     }
     
     .status-badge {
@@ -36,31 +82,128 @@
     }
     
     .form-control:focus {
-      border-color: #0d6efd;
-      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.25rem rgba(26, 75, 140, 0.25);
     }
     
     .order-price {
-      color: #dc3545;
+      color: var(--accent-color);
       font-weight: 700;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
     }
     
     .empty-state {
       text-align: center;
-      padding: 3rem 1rem;
+      padding: 4rem 1rem;
     }
     
     .empty-state i {
       font-size: 4rem;
-      color: #ddd;
-      margin-bottom: 1rem;
+      color: var(--light-text);
+      margin-bottom: 1.5rem;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      font-weight: 600;
+      padding: 0.75rem 1.5rem;
+      transition: var(--transition);
+    }
+    
+    .btn-primary:hover {
+      background-color: #153a6d;
+      border-color: #153a6d;
+      transform: translateY(-2px);
+    }
+    
+    .section-title {
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      position: relative;
+      display: inline-block;
+    }
+    
+    .section-title:after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 50%;
+      height: 3px;
+      background: var(--accent-color);
+    }
+    
+    .search-box {
+      background: white;
+      border-radius: 0.5rem;
+      box-shadow: var(--shadow);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .input-group-text {
+      background-color: white;
+      border-right: none;
+    }
+    
+    .form-control {
+      border-left: none;
+    }
+    
+    .alert {
+      border-radius: 0.5rem;
+      border: none;
+      box-shadow: var(--shadow);
+    }
+    
+    .copyright {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 1.5rem 0;
+      text-align: center;
+      margin-top: 3rem;
+    }
+    
+    .copyright p {
+      margin: 0;
+      opacity: 0.8;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .hero-section {
+        padding: 2.5rem 0;
+      }
+      
+      .hero-section h1 {
+        font-size: 2rem;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .hero-section {
+        padding: 2rem 0;
+      }
+      
+      .hero-section h1 {
+        font-size: 1.75rem;
+      }
+      
+      .hero-section p {
+        font-size: 1rem;
+      }
+      
+      .search-box {
+        padding: 1.25rem;
+      }
     }
   </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container">
     <a class="navbar-brand" href="index.html">
       <i class="fa-solid fa-trophy me-2"></i>Sports Store
@@ -68,7 +211,7 @@
   </div>
 </nav>
 
-<div class="hero-section text-center">
+<div class="hero-section">
   <div class="container">
     <h1>My Orders</h1>
     <p>Track your orders and delivery status</p>
@@ -78,21 +221,28 @@
 <div class="container mt-4">
   <div id="alertArea"></div>
   
-  <div class="mb-4">
-    <h4><i class="fa-solid fa-magnifying-glass me-2"></i>Find Your Orders</h4>
+  <div class="search-box">
+    <h4 class="section-title"><i class="fa-solid fa-magnifying-glass me-2"></i>Find Your Orders</h4>
     <div class="input-group">
-      <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
+      <span class="input-group-text"><i class="fa-solid fa-phone text-muted"></i></span>
       <input type="text" id="phoneInput" class="form-control form-control-lg" placeholder="Enter your phone number">
       <button class="btn btn-primary" id="searchBtn">
         <span class="spinner-border spinner-border-sm" id="searchSpinner" style="display: none;"></span>
         <span id="searchText">Search Orders</span>
       </button>
     </div>
-    <div class="form-text mt-2">Enter the phone number you used when placing your order</div>
+    <div class="form-text mt-2 text-muted">Enter the phone number you used when placing your order</div>
   </div>
   
   <h3 class="mb-3" id="resultsTitle" style="display: none;">Your Orders</h3>
   <div id="ordersContainer"></div>
+</div>
+
+<!-- Copyright Section -->
+<div class="copyright">
+  <div class="container">
+    <p>&copy; 2023 Sports Store. All rights reserved.</p>
+  </div>
 </div>
 
 <script>
@@ -188,7 +338,7 @@ function displayOrders(orders, phone) {
     }
     
     return `
-    <div class="card mb-4">
+    <div class="card">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-start mb-2">
           <h5 class="card-title">${order.ProductTitle || 'Sports Product'}</h5>
